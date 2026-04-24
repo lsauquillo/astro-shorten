@@ -1,5 +1,6 @@
 ---
-
+import '../styles/global.css';
+import ShortenVue from '../components/ShortenVue.vue';
 ---
 
 <html lang="en">
@@ -11,7 +12,17 @@
 		<meta name="generator" content={Astro.generator} />
 		<title>Astro</title>
 	</head>
-	<body>
-		<h1>Astro</h1>
+	<body class="bg-base-200 text-base-content">
+		<!-- <div class="min-h-screen flex items-center justify-center p-6"> -->
+			<!-- <div class="card w-full max-w-xl shadow-xl bg-base-100"> -->
+				<!-- <div class="card-body"> -->
+					<!-- <h1 class="text-5xl font-bold text-red-500">Astro + Tailwind + Vue 3</h1> -->
+					<!-- <p class="text-lg text-muted-foreground">Estilos instalados y un componente Vue integrado.</p> -->
+						<!-- <ShortenVue client:load /> -->
+				<!-- </div> -->
+			<!-- </div> -->
+		<!-- </div> -->
+
+		<ShortenVue client:load />
 	</body>
 </html>
