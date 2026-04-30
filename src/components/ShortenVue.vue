@@ -1,41 +1,73 @@
 <template>
-  <div class="min-h-screen flex items-center justify-center">
-    <div class=" flex-col w-full max-w-lg bg-gray-200 shadow rounded-lg p-8 text-center">
-      <h1 class="text-4xl font-bold mb-6">SHORTEN URL'S</h1>
-      <div class="flex items-center gap-4 mb-4">
-        <label
-          class="text-lg font-medium text-slate-700 whitespace-nowrap"
-          for="shorten-url"
-        >
-          URL a acortar:
-        </label>
+  <div class="min-h-screen flex items-center justify-center bg-gray-100">
+    <div class="bg-white shadow-lg rounded-2xl p-6 w-full max-w-md">
+      <h2 class="text-2xl font-semibold mb-4 text-gray-800">
+        Acortador de URL
+      </h2>
+
+      <form id="form" class="flex flex-col gap-4">
         <input
-          id="shorten-url"
-          v-model="longUrl"
-          type="text"
-          placeholder="Ingresa una URL para acortar"
-          class="flex-1 border border-gray-700 rounded-md px-4 py-3 text-base focus:outline-none focus:ring-2 focus:ring-sky-500"
+          id="urlInput"
+          type="url"
+          required
+          placeholder="https://ejemplo.com"
+          class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
         />
-      </div>
-      <button
-        type="button"
-        class="mt-4 inline-flex items-center justify-center rounded-md bg-sky-600 px-6 py-3 text-base font-semibold text-white hover:bg-sky-700 focus:outline-none focus:ring-2 focus:ring-sky-500"
-      >
-        Acortar
-      </button>
-      
+
+        <button
+          type="submit"
+          class="bg-blue-600 text-white py-2 rounded-lg hover:bg-blue-700 transition"
+        >
+          Acortar
+        </button>
+      </form>
+
+      <div class="mt-6 text-center">
+  <p class="text-sm text-gray-500 mb-1">URL corta:</p>
+  <p
+    id="result"
+    class="text-blue-600 font-medium break-words"
+  ></p>
+</div>
     </div>
   </div>
-
-  <div class="mt-6 p-4 bg-slate-100 rounded-md text-left">
-        <p class="text-sm font-medium text-slate-600 mb-2">URL ingresada:</p>
-        <p class="text-base text-slate-800 break-all">
-          {{ longUrl || "Ninguna URL ingresada" }}
-        </p>
-      </div>
 </template>
 
 <script setup>
-import { ref } from "vue";
-const longUrl = ref("");
+import { onMounted } from "vue";
+
+onMounted(() => {
+  const form = document.getElementById("form");
+  const input = document.getElementById("urlInput");
+  const result = document.getElementById("result");
+
+  form.addEventListener("submit", async function (event) {
+    event.preventDefault();
+
+    const url = input.value.trim();
+
+    const response = await fetch("/api/shorten", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json"
+      },
+      body: JSON.stringify({ url })
+    });
+
+    const text = await response.text();
+
+    if (!response.ok) {
+      result.textContent = "Error: " + text;
+      return;
+    }
+
+    const data = JSON.parse(text);
+
+    if (data.shortURL) {
+      result.innerHTML = `<a class="text-blue-600 underline" href="${data.shortURL}" target="_blank">${data.shortURL}</a>`;
+    } else {
+      result.textContent = text;
+    }
+  });
+});
 </script>
